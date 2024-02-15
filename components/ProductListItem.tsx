@@ -1,12 +1,6 @@
 import { Product } from '@/types';
-import { Link } from 'expo-router';
-import {
-  View,
-  Text,
-  Image,
-  StyleSheet,
-  Pressable,
-} from 'react-native';
+import { Link, useSegments } from 'expo-router';
+import { View, Text, Image, StyleSheet, Pressable } from 'react-native';
 import { Colors } from 'react-native/Libraries/NewAppScreen';
 
 type ProductListItemProps = {
@@ -14,13 +8,12 @@ type ProductListItemProps = {
 };
 
 const ProductListItem = ({ product }: ProductListItemProps) => {
+  const segments = useSegments();
+  const user = segments[0] === '(user)' ? '(user)' : '(admin)';
   return (
-    <Link href={`/menu/${product.id}`} asChild>
+    <Link href={`/${user}/menu/${product.id}`} asChild>
       <Pressable style={styles.container}>
-        <Image
-          source={{ uri: product.image! }}
-          style={styles.image}
-        />
+        <Image source={{ uri: product.image! }} style={styles.image} />
         <Text style={styles.title}>{product.name}</Text>
         <Text style={styles.price}>${product.price}</Text>
       </Pressable>
