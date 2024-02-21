@@ -1,4 +1,11 @@
-import { View, Text, StyleSheet, TextInput, Image } from 'react-native';
+import {
+  View,
+  Text,
+  StyleSheet,
+  TextInput,
+  Image,
+  Alert,
+} from 'react-native';
 import React, { useState } from 'react';
 import Button from '@/components/Button';
 import Colors from '@/constants/Colors';
@@ -55,12 +62,44 @@ const CreateProductScreen = () => {
     if (!validateInput()) {
       // submit data
     }
+    resetFields();
+  };
+
+  const onUpdateCreate = () => {};
+
+  const onSubmit = () => {
+    if (isUpdating) {
+      onCreate();
+    } else {
+      onUpdateCreate();
+    }
+  };
+
+  const onDelete = () => {};
+
+  const confirmDelete = () => {
+    Alert.alert(
+      'Confirm',
+      'Are you sure you want to delete this product?',
+      [
+        {
+          text: 'Cancel',
+        },
+        {
+          text: 'Delete',
+          style: 'destructive',
+          onPress: onDelete,
+        },
+      ],
+    );
   };
 
   return (
     <View style={styles.container}>
       <Stack.Screen
-        options={{ title: isUpdating ? 'Update Product' : 'Create Product' }}
+        options={{
+          title: isUpdating ? 'Update Product' : 'Create Product',
+        }}
       />
       <Image source={{ uri: image || '' }} style={styles.image} />
       <Text onPress={pickImage} style={styles.textButton}>
@@ -82,7 +121,15 @@ const CreateProductScreen = () => {
         onChangeText={setPrice}
       />
       <Text style={{ color: 'red' }}>{errors}</Text>
-      <Button text='Create' onPress={onCreate} />
+      <Button
+        text={isUpdating ? 'Update' : 'Create'}
+        onPress={onSubmit}
+      />
+      {isUpdating && (
+        <Text style={styles.textButton} onPress={confirmDelete}>
+          Delete
+        </Text>
+      )}
     </View>
   );
 };
@@ -91,6 +138,7 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     justifyContent: 'center',
+    padding: 10,
   },
   input: {
     backgroundColor: 'white',
