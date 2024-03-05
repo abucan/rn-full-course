@@ -4,38 +4,56 @@ import {
   Image,
   StyleSheet,
   Pressable,
+  ActivityIndicator,
 } from 'react-native';
 import React, { useState } from 'react';
 import { Stack, useLocalSearchParams, useRouter } from 'expo-router';
-import products from '@/assets/data/products';
 import Button from '@/components/Button';
 import { useCart } from '@/providers/CartProvider';
 import { PizzaSize } from '@/types';
+import { useProduct } from '@/api/products';
 
 const sizes: PizzaSize[] = ['S', 'M', 'L', 'XL'];
 
 const ProductDetailsScreen = () => {
-  const { id } = useLocalSearchParams();
+  const { id: idString } = useLocalSearchParams();
+  const id = parseFloat(typeof idString === 'string' ? idString : idString[0]);
+
+  const { data: product, error, isLoading } = useProduct(id);
+
   const router = useRouter();
   const [selectedSize, setSelectedSize] = useState<PizzaSize>('M');
 
   const { addItem } = useCart();
-
-  const product = products.find((p) => p.id.toString() === id);
 
   const addToCart = () => {
     product && addItem(product, selectedSize);
     router.push('/cart');
   };
 
+  if (isLoading) {
+    return <ActivityIndicator />;
+  }
+
   if (!product) {
     return <Text>Product not found</Text>;
+  }
+
+  if (error) {
+    return <Text>Failed to fetch the product.</Text>;
   }
 
   return (
     <View style={styles.container}>
       <Stack.Screen options={{ title: product.name }} />
-      <Image source={{ uri: product.image }} style={styles.image} />
+      <Image
+        source={{
+          uri:
+            product.image ||
+            'https://notjustdev-dummy.s3.us-east-2.amazonaws.com/food/peperoni.png',
+        }}
+        style={styles.image}
+      />
 
       <Text>Select size</Text>
       <View style={styles.sizes}>

@@ -13,7 +13,14 @@ const ProductListItem = ({ product }: ProductListItemProps) => {
   return (
     <Link href={`/${user}/menu/${product.id}`} asChild>
       <Pressable style={styles.container}>
-        <Image source={{ uri: product.image! }} style={styles.image} />
+        <Image
+          source={{
+            uri:
+              product.image ||
+              'https://notjustdev-dummy.s3.us-east-2.amazonaws.com/food/peperoni.png',
+          }}
+          style={styles.image}
+        />
         <Text style={styles.title}>{product.name}</Text>
         <Text style={styles.price}>${product.price}</Text>
       </Pressable>
