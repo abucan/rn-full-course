@@ -1,11 +1,17 @@
 import { supabase } from '@/lib/supabase';
-import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
+import {
+  useQuery,
+  useMutation,
+  useQueryClient,
+} from '@tanstack/react-query';
 
 export const useProductList = () => {
   return useQuery({
     queryKey: ['products'],
     queryFn: async () => {
-      const { data, error } = await supabase.from('products').select('*');
+      const { data, error } = await supabase
+        .from('products')
+        .select('*');
       if (error) {
         throw new Error(error.message);
       }
@@ -77,7 +83,9 @@ export const useUpdateProduct = () => {
     },
     async onSuccess(_, data) {
       await queryClient.invalidateQueries({ queryKey: ['products'] });
-      await queryClient.invalidateQueries({ queryKey: ['product', data.id] });
+      await queryClient.invalidateQueries({
+        queryKey: ['product', data.id],
+      });
     },
   });
 };
@@ -87,7 +95,10 @@ export const useDeleteProduct = () => {
 
   return useMutation({
     async mutationFn(id: number) {
-      const { error } = await supabase.from('products').delete().eq('id', id);
+      const { error } = await supabase
+        .from('products')
+        .delete()
+        .eq('id', id);
       if (error) {
         throw new Error(error.message);
       }
