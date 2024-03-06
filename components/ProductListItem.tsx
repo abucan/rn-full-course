@@ -1,10 +1,10 @@
-import { Product } from '@/types';
+import { Tables } from '@/database.types';
 import { Link, useSegments } from 'expo-router';
-import { View, Text, Image, StyleSheet, Pressable } from 'react-native';
+import { Text, Image, StyleSheet, Pressable } from 'react-native';
 import { Colors } from 'react-native/Libraries/NewAppScreen';
 
 type ProductListItemProps = {
-  product: Product;
+  product: Tables<'products'>;
 };
 
 const ProductListItem = ({ product }: ProductListItemProps) => {
