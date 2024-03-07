@@ -12,25 +12,26 @@ import OrderListItem from '@/components/OrderListItem';
 import OrderItemListItem from '@/components/OrderItemListItem';
 import { OrderStatusList } from '@/types';
 import Colors from '@/constants/Colors';
-import { useOrderDetails } from '@/api/orders';
+import { useOrderDetails, useUpdateOrder } from '@/api/orders';
 
 const OrderDetailsScreen = () => {
   const { id: idString } = useLocalSearchParams();
-  const id = parseFloat(
-    typeof idString === 'string' ? idString : idString[0],
-  );
+  const id = parseFloat(typeof idString === 'string' ? idString : idString[0]);
 
   const { data: order, isLoading, error } = useOrderDetails(id);
+  const { mutate: updateOrder } = useUpdateOrder();
 
   if (isLoading) return <ActivityIndicator />;
 
-  if (error) return <Text>Failed to fetch.</Text>;
+  if (error || !order) return <Text>Failed to fetch.</Text>;
+
+  const updateStatus = (status: string) => {
+    updateOrder({ id: id, updatedFields: { status } });
+  };
 
   return (
     <View style={styles.container}>
-      <Stack.Screen
-        options={{ title: 'Order #' + order?.id.toString() }}
-      />
+      <Stack.Screen options={{ title: `Order # + ${id}` }} />
       <OrderListItem order={order} />
       <FlatList
         data={order.order_items}
@@ -46,7 +47,7 @@ const OrderDetailsScreen = () => {
                 {OrderStatusList.map((status) => (
                   <Pressable
                     key={status}
-                    onPress={() => console.warn('Update status')}
+                    onPress={() => updateStatus(status)}
                     style={{
                       borderColor: Colors.light.tint,
                       borderWidth: 1,
@@ -62,9 +63,7 @@ const OrderDetailsScreen = () => {
                     <Text
                       style={{
                         color:
-                          order.status === status
-                            ? 'white'
-                            : Colors.light.tint,
+                          order.status === status ? 'white' : Colors.light.tint,
                       }}
                     >
                       {status}

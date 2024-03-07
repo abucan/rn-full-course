@@ -11,6 +11,7 @@ import { Link, Stack, useLocalSearchParams } from 'expo-router';
 import { FontAwesome } from '@expo/vector-icons';
 import Colors from '@/constants/Colors';
 import { useProduct } from '@/api/products';
+import RemoteImage from '@/components/RemoteImage';
 
 const ProductDetailsScreen = () => {
   const { id: idString } = useLocalSearchParams();
@@ -29,6 +30,9 @@ const ProductDetailsScreen = () => {
   if (error) {
     return <Text>Failed to fetch the product.</Text>;
   }
+
+  const imgDefault =
+    'https://notjustdev-dummy.s3.us-east-2.amazonaws.com/food/peperoni.png';
 
   return (
     <View style={styles.container}>
@@ -55,7 +59,11 @@ const ProductDetailsScreen = () => {
         }}
       />
       <Stack.Screen options={{ title: product.name }} />
-      <Image source={{ uri: product.image }} style={styles.image} />
+      <RemoteImage
+        path={product.image}
+        fallback={imgDefault}
+        style={styles.image}
+      />
       <Text style={styles.price}>${product.price}</Text>
     </View>
   );

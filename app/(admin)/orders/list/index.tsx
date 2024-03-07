@@ -1,7 +1,10 @@
 import { Text, FlatList, ActivityIndicator } from 'react-native';
-import React from 'react';
+import React, { useEffect } from 'react';
 import OrderListItem from '@/components/OrderListItem';
 import { useAdminOrdersList } from '@/api/orders';
+import { supabase } from '@/lib/supabase';
+import { useQueryClient } from '@tanstack/react-query';
+import { useInsertOrderListener } from '@/api/orders/subscription';
 
 const OrdersScreen = () => {
   const {
@@ -9,6 +12,8 @@ const OrdersScreen = () => {
     isLoading,
     error,
   } = useAdminOrdersList({ archived: false });
+
+  useInsertOrderListener();
 
   if (isLoading) {
     return <ActivityIndicator />;

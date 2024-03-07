@@ -2,6 +2,7 @@ import { Tables } from '@/database.types';
 import { Link, useSegments } from 'expo-router';
 import { Text, Image, StyleSheet, Pressable } from 'react-native';
 import { Colors } from 'react-native/Libraries/NewAppScreen';
+import RemoteImage from './RemoteImage';
 
 type ProductListItemProps = {
   product: Tables<'products'>;
@@ -10,16 +11,17 @@ type ProductListItemProps = {
 const ProductListItem = ({ product }: ProductListItemProps) => {
   const segments = useSegments();
   const user = segments[0] === '(user)' ? '(user)' : '(admin)';
+
+  const imgDefault =
+    'https://notjustdev-dummy.s3.us-east-2.amazonaws.com/food/peperoni.png';
+
   return (
     <Link href={`/${user}/menu/${product.id}`} asChild>
       <Pressable style={styles.container}>
-        <Image
-          source={{
-            uri:
-              product.image ||
-              'https://notjustdev-dummy.s3.us-east-2.amazonaws.com/food/peperoni.png',
-          }}
+        <RemoteImage
+          path={product.image}
           style={styles.image}
+          fallback={imgDefault}
         />
         <Text style={styles.title}>{product.name}</Text>
         <Text style={styles.price}>${product.price}</Text>

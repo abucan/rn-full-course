@@ -12,6 +12,7 @@ import Button from '@/components/Button';
 import { useCart } from '@/providers/CartProvider';
 import { PizzaSize } from '@/types';
 import { useProduct } from '@/api/products';
+import RemoteImage from '@/components/RemoteImage';
 
 const sizes: PizzaSize[] = ['S', 'M', 'L', 'XL'];
 
@@ -43,15 +44,15 @@ const ProductDetailsScreen = () => {
     return <Text>Failed to fetch the product.</Text>;
   }
 
+  const imgDefault =
+    'https://notjustdev-dummy.s3.us-east-2.amazonaws.com/food/peperoni.png';
+
   return (
     <View style={styles.container}>
       <Stack.Screen options={{ title: product.name }} />
-      <Image
-        source={{
-          uri:
-            product.image ||
-            'https://notjustdev-dummy.s3.us-east-2.amazonaws.com/food/peperoni.png',
-        }}
+      <RemoteImage
+        path={product.image}
+        fallback={imgDefault}
         style={styles.image}
       />
 

@@ -1,24 +1,27 @@
 import { View, Text, StyleSheet, Image } from 'react-native';
 import React from 'react';
 import Colors from '../constants/Colors';
-import { OrderItem } from '../types';
+import { Tables } from '@/database.types';
+import RemoteImage from './RemoteImage';
 
 type OrderItemListItemProps = {
-  item: OrderItem;
+  item: { products: Tables<'products'> } & Tables<'order_items'>;
 };
+
+const imgDefault =
+  'https://notjustdev-dummy.s3.us-east-2.amazonaws.com/food/peperoni.png';
 
 const OrderItemListItem = ({ item }: OrderItemListItemProps) => {
   return (
     <View style={styles.container}>
       <View style={styles.leftSide}>
-        <Image
-          source={{ uri: item.products.image || '' }}
+        <RemoteImage
+          path={item.products.image}
+          fallback={imgDefault}
           style={styles.image}
         />
         <View style={styles.titleContainer}>
-          <Text style={styles.orderNumText}>
-            {item.products.name}
-          </Text>
+          <Text style={styles.orderNumText}>{item.products.name}</Text>
           <View style={styles.subTitleContainer}>
             <Text style={styles.priceText}>
               ${item.products.price.toFixed(2)}

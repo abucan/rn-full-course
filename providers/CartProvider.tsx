@@ -1,10 +1,5 @@
 import { CartItem } from '@/types';
-import {
-  PropsWithChildren,
-  createContext,
-  useContext,
-  useState,
-} from 'react';
+import { PropsWithChildren, createContext, useContext, useState } from 'react';
 import { randomUUID } from 'expo-crypto';
 import { Tables } from '@/database.types';
 import { useInsertOrder } from '@/api/orders';
@@ -13,10 +8,7 @@ import { useInsertOrderItems } from '@/api/order_items';
 
 type CartType = {
   items: CartItem[];
-  addItem: (
-    product: Tables<'products'>,
-    size: CartItem['size'],
-  ) => void;
+  addItem: (product: Tables<'products'>, size: CartItem['size']) => void;
   updateQuantity: (itemId: string, amount: -1 | 1) => void;
   total: number;
   checkout: () => void;
@@ -42,18 +34,15 @@ const CartProvider = ({ children }: PropsWithChildren) => {
       .map((item) =>
         item.id !== itemId
           ? item
-          : { ...item, quantity: item.quantity + amount },
+          : { ...item, quantity: item.quantity + amount }
       )
       .filter((item) => item.quantity > 0);
     setItems(updatedItems);
   };
 
-  const addItem = (
-    product: Tables<'products'>,
-    size: CartItem['size'],
-  ) => {
+  const addItem = (product: Tables<'products'>, size: CartItem['size']) => {
     const existingItem = items.find(
-      (item) => item.product === product && item.size === size,
+      (item) => item.product === product && item.size === size
     );
 
     if (existingItem) {
@@ -74,7 +63,7 @@ const CartProvider = ({ children }: PropsWithChildren) => {
 
   const total = items.reduce(
     (sum, item) => (sum += item.product.price * item.quantity),
-    0,
+    0
   );
 
   const clearCart = () => {
@@ -88,18 +77,23 @@ const CartProvider = ({ children }: PropsWithChildren) => {
       },
       {
         onSuccess: saveOrderItems,
-      },
+      }
     );
   };
 
   const saveOrderItems = (data: Tables<'orders'>) => {
-    // insertOrderItem({
-    //   order_id: data.id,
-    //   product_id:
-    // })
-
-    clearCart();
-    router.push(`/(user)/orders/${data.id}`);
+    const orderItems = items.map((cartItem) => ({
+      order_id: data.id,
+      product_id: cartItem.product_id,
+      quantity: cartItem.quantity,
+      size: cartItem.size,
+    }));
+    insertOrderItem(orderItems, {
+      onSuccess() {
+        clearCart();
+        router.push(`/(user)/orders/${data.id}`);
+      },
+    });
   };
 
   return (

@@ -1,36 +1,33 @@
-import {
-  View,
-  Text,
-  StyleSheet,
-  Image,
-  Pressable,
-} from 'react-native';
+import { View, Text, StyleSheet, Image, Pressable } from 'react-native';
 import React from 'react';
 import Colors from '../constants/Colors';
 import { CartItem } from '../types';
 import { Link } from 'expo-router';
 import { FontAwesome } from '@expo/vector-icons';
 import { useCart } from '../providers/CartProvider';
+import RemoteImage from './RemoteImage';
 
 type CartListItemProps = {
   cartItem: CartItem;
 };
 
+const imgDefault =
+  'https://notjustdev-dummy.s3.us-east-2.amazonaws.com/food/peperoni.png';
+
 const CartListItem = ({ cartItem }: CartListItemProps) => {
   const { updateQuantity } = useCart();
   return (
     <View style={styles.container}>
-      <Image
-        source={{ uri: cartItem.product.image || '' }}
+      <RemoteImage
+        path={cartItem.product.image}
+        fallback={imgDefault}
         style={styles.image}
         resizeMode='contain'
       />
       <View style={{ flex: 1 }}>
         <Text style={styles.title}>{cartItem.product.name}</Text>
         <View style={styles.subtitleContainer}>
-          <Text style={styles.price}>
-            ${cartItem.product.price.toFixed(2)}
-          </Text>
+          <Text style={styles.price}>${cartItem.product.price.toFixed(2)}</Text>
           <Text>Size: {cartItem.size}</Text>
         </View>
       </View>
